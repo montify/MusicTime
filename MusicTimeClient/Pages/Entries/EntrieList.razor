@@ -1,0 +1,85 @@
+﻿@page "/entrieList"
+@using MusicTimeClient.Contracts
+@using MusicTimeClient.Models.Entry
+
+<div class="container ">
+    <h3 class="text-center">EntrieList</h3>
+    <div class="d-flex justify-content-center">
+        <button type="button" class="btn btn-primary" @onclick="(Action<MouseEventArgs>)OnAddShow">Add Entry</button>
+    </div>
+    @if (isAddEntryToggle)
+    {
+        <AddEntry OnClick="OnAddEntry"/>
+        <br />
+    }
+
+    @if (EntryService is null)
+    {
+        <p class="text-center">Loading...</p>
+    }
+    else
+    {
+        <table class="table table-sm table-dark text-center">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Todo</th>
+                    <th scope="col">Check</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var entry in Entries)
+                {
+                    <tr>
+                        <th scope="row">@entry.Id</th>
+                        <td>@entry.Date</td>
+                        <td>@entry.Description</td>
+                        <td>
+                            <DeleteEntry EntryId="@entry.Id" OnDelete="OnDeleteEntry" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@code {
+    [Inject]
+    public IEntryService? EntryService { get; set; }
+
+    public List<Entry> Entries = new List<Entry>();
+    public bool isAddEntryToggle;
+
+    public async Task OnAddEntry()
+    {
+        if (EntryService is not null)
+        {
+            Entries = (await EntryService.GetAllEntries()).ToList();
+            Entries.Reverse();
+        }
+    }
+
+    public void OnDeleteEntry(int entryId)
+    {
+        var entryToDelete = Entries.FirstOrDefault(e => e.Id == entryId);
+
+        if (entryToDelete is not null)
+            Entries.Remove(entryToDelete);
+    }
+
+    private void OnAddShow(MouseEventArgs e)
+    {
+        isAddEntryToggle = !isAddEntryToggle;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (EntryService is not null)
+        {
+            Entries = (await EntryService.GetAllEntries()).ToList();
+            Entries.Reverse();
+        }
+    }
+}

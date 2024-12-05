@@ -1,0 +1,45 @@
+﻿@page "/addEntry"
+@using MusicTimeClient.Contracts
+@using MusicTimeClient.Models.Entry
+
+<div class="d-flex justify-content-center">
+    <EditForm Model="m_Model" OnValidSubmit="Submit">
+        <div class="form-group row text-center">
+            <label>Todo</label>
+            <InputText @bind-value="m_Model.Description" type="text" class="form-control text-center" id="entryTask" placeholder="What you did today?"></InputText>
+        </div>
+        <div class="form-group row text-center">
+            <label>Duration</label>
+            <input @bind-value="m_Model.DurationInMinutes" type="number" class="form-control text-center" id="duration" placeholder="how long">
+        </div>
+        <div class="form-group row text-center">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    [Inject]
+    public IEntryService? EntryService { get; set; }
+    [Parameter]
+    public int EntryId { get; set; }
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    private Entry m_Model = new Entry();
+    private string m_durationInMinutesString = new String(""); //Ugly i know :)
+
+    public async void Submit()
+    {
+        m_durationInMinutesString = m_Model.DurationInMinutes.ToString();
+
+        if (m_Model.DurationInMinutes <= 0 || string.IsNullOrEmpty(m_Model.Description))
+            return;
+
+        if (EntryService is not null)
+            await EntryService.AddEntry(m_Model);
+
+        if (OnClick.HasDelegate)
+            await OnClick.InvokeAsync();
+    }
+}
