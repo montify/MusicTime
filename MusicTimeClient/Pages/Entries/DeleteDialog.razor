@@ -1,0 +1,19 @@
+﻿@using MusicTimeClient.Contracts
+<h3>DeleteDialog</h3>
+<MudDialog>
+    <TitleContent>Delte</TitleContent>
+    <DialogActions>
+        <MudButton OnClick="Delete">Delete</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+   
+    private async void Delete()
+    {
+       MudDialog.Close(DialogResult.Ok(""));
+    }
+}

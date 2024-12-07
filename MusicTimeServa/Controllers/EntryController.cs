@@ -21,8 +21,9 @@ namespace MusicTimeServa.Controllers
             var entries = m_entrieService.GetAllEntrys();
 
             if(entries == null)
-                return StatusCode(StatusCodes.Status204NoContent, "No Entrys found");
+                return StatusCode(StatusCodes.Status204NoContent, "Cant fetch entrys");
 
+            
             return StatusCode(StatusCodes.Status200OK, entries); 
         }
         
@@ -30,7 +31,7 @@ namespace MusicTimeServa.Controllers
         public ActionResult AddEntry(Entry entry)
         {
             //TODO Detect if any field is empy not just the object itself is null
-            if (entry == null)
+            if (entry.CheckIfValid() is false)
                 return StatusCode(StatusCodes.Status400BadRequest, "Entry cant be null");
 
             try

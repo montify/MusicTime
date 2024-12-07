@@ -1,0 +1,106 @@
+﻿@page "/entryList"
+@using MudBlazor
+@using MusicTimeClient.Contracts
+@using MusicTimeClient.Models.Entry
+@inject IDialogService DialogService
+
+<div class="container ">
+    <h3 class="text-center">♥Music and Guitar♥</h3>
+    <div class="d-flex justify-content-center">
+        <button type="button" class="btn btn-primary" @onclick="(Action<MouseEventArgs>)OnAddShow">Add Entry</button>
+    </div>
+    @if (isAddEntryToggle)
+    {
+        <AddEntry OnClick="OnAddEntry"/>
+        <br />
+    }
+
+    @if (EntryService is null)
+    {
+        <p class="text-center">Loading...</p>
+    }
+    else
+    {
+        <MudDataGrid EditTrigger="DataGridEditTrigger.OnRowClick" T = "Entry" Bordered ="true" CommittedItemChanges="@CommitedItemChange" EditMode="DataGridEditMode.Form" ReadOnly = "false" Items ="@Entries" >
+            <Columns>
+                <PropertyColumn Editable="false" Property="x => x.DateToString()" Title="Date"></PropertyColumn>
+                <PropertyColumn Property="x => x.DurationInMinutes" Title="Time"></PropertyColumn>
+                <PropertyColumn Property="x => x.Description" Title="Description"></PropertyColumn>
+                <TemplateColumn>
+                    <CellTemplate>          
+                        <MudButton @onclick=" () => OpenDeleteDialogAsync(context.Item.Id)" Variant="Variant.Filled">ss</MudButton>
+                    </CellTemplate>
+                </TemplateColumn>
+            </Columns>
+        </MudDataGrid>
+    }
+</div>
+
+@code {
+    [Inject]
+    public IEntryService? EntryService { get; set; }
+    [Parameter]
+    public int EntryId { get; set; }
+    [Parameter]
+    public EventCallback<int> OnDelete { get; set; }
+    public List<Entry> Entries = new List<Entry>();
+    public bool isAddEntryToggle;
+
+    public async Task OnAddEntry()
+    {
+        if (EntryService is not null)
+        {
+            Entries = (await EntryService.GetAllEntries()).ToList();
+            Entries.Reverse();
+        }
+    }
+
+    private void OnAddShow(MouseEventArgs e)
+    {
+        isAddEntryToggle = !isAddEntryToggle;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (EntryService is not null)
+        {
+            Entries = (await EntryService.GetAllEntries()).ToList();
+            Entries.Reverse();
+        }
+    }
+
+    public void CommitedItemChange(Entry entry)
+    {
+
+        if (EntryService is not null)
+            EntryService.UpdateEntry(entry);
+    }
+
+    private async void OpenDeleteDialogAsync(int entryId)
+    {
+        var dialog = await DialogService.ShowAsync<DeleteDialog>("Wanna Delete?");
+        var result = await dialog.Result;
+
+        if(!result.Canceled)
+        {
+            DeleteEntry(entryId);
+        }
+    }
+
+    public async void DeleteEntry(int entryId)
+    {
+        //Maybe better to Delete from Db and then fetch the whole db again instead of manage the local List seperatly
+
+        //Delete from DB
+        if (EntryService is not null)
+            await EntryService.DeleteEntry(entryId);
+
+        var entryToDelete = Entries.FirstOrDefault(e => e.Id == entryId);
+
+        //Delete From LocaList
+        if (entryToDelete is not null)
+            Entries.Remove(entryToDelete);
+
+        StateHasChanged();
+    }
+}

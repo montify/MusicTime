@@ -8,5 +8,6 @@ namespace MusicTimeServa.Services
         public void AddEntry(Entry entry);
         public void DeleteEntryFromId(int entryId);
         public void UpdateUser(Entry modifiedEntry);
+        
     }
 }

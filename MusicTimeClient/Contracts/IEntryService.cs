@@ -7,5 +7,6 @@ namespace MusicTimeClient.Contracts
         Task<Entry[]> GetAllEntries();
         public Task DeleteEntry(int entryId);
         public Task AddEntry(Entry entry);
+        public Task UpdateEntry(Entry entry);
     }
 }

@@ -14,6 +14,11 @@
         </div>
         <div class="form-group row text-center">
             <button type="submit" class="btn btn-primary">Submit</button>
+            @if (string.IsNullOrEmpty(Message) == false)
+            {
+                @Message
+            }
+
         </div>
     </EditForm>
 </div>
@@ -27,14 +32,19 @@
     public EventCallback OnClick { get; set; }
 
     private Entry m_Model = new Entry();
+    public string Message { get; set; } = string.Empty;
     private string m_durationInMinutesString = new String(""); //Ugly i know :)
 
     public async void Submit()
     {
+        Message = "";
         m_durationInMinutesString = m_Model.DurationInMinutes.ToString();
 
         if (m_Model.DurationInMinutes <= 0 || string.IsNullOrEmpty(m_Model.Description))
+        {
+            Message = "Invalid Input";
             return;
+        }
 
         if (EntryService is not null)
             await EntryService.AddEntry(m_Model);
