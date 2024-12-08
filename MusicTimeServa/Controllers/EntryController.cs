@@ -20,13 +20,13 @@ namespace MusicTimeServa.Controllers
         {
             var entries = m_entrieService.GetAllEntrys();
 
-            if(entries == null)
+            if (entries == null)
                 return StatusCode(StatusCodes.Status204NoContent, "Cant fetch entrys");
 
-            
-            return StatusCode(StatusCodes.Status200OK, entries); 
+
+            return StatusCode(StatusCodes.Status200OK, entries);
         }
-        
+
         [HttpPost()]
         public ActionResult AddEntry(Entry entry)
         {
@@ -48,7 +48,7 @@ namespace MusicTimeServa.Controllers
         [HttpDelete()]
         public ActionResult DeleteEntry(int id)
         {
-            if(id <= 0)
+            if (id <= 0)
                 return StatusCode(StatusCodes.Status400BadRequest, "Id must be > 0");
 
             try
@@ -65,7 +65,7 @@ namespace MusicTimeServa.Controllers
         [HttpPut]
         public ActionResult UpdateEntry(Entry entry)
         {
-            if(entry == null)
+            if (entry == null)
                 return StatusCode(StatusCodes.Status400BadRequest, "Entry cant be null");
 
             try

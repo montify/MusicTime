@@ -12,10 +12,6 @@ namespace MusicTimeServa.Services
             Configuration = configuration;
         }
 
-        //protected override void OnModelCreating(ModelBuilder modelBuilder)
-        //{
-        //    modelBuilder.Entity<Entries>().ToTable("Id", t => t.ExcludeFromMigrations());
-        //}
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             // connect to sqlite database
@@ -23,6 +19,6 @@ namespace MusicTimeServa.Services
         }
 
         public DbSet<Entry> Entries { get; set; }
-
+        public DbSet<User> Users { get; set; }
     }
 }

@@ -22,11 +22,11 @@ namespace MusicTimeServa.Services
             {
                 _context.Add(entry);
                 _context.SaveChanges();
-              
+
             }
             catch (Exception)
             {
-                throw new Exception("Cant delete user");
+                throw new Exception("Cant Add user");
             }
         }
 
@@ -37,8 +37,15 @@ namespace MusicTimeServa.Services
             if (user == null)
                 throw new Exception("User not exist");
 
-            _context.Remove(user);
-            _context.SaveChanges();
+            try
+            {
+                _context.Remove(user);
+                _context.SaveChanges();
+            }
+            catch (Exception)
+            {
+                throw new Exception("Cant remove user");
+            }           
         }
 
         public void UpdateUser(Entry modifiedEntry)
@@ -61,10 +68,8 @@ namespace MusicTimeServa.Services
             }
             catch (Exception)
             {
-
                 throw new Exception("Cant update Entry");
             }
-           
         }
     }
 }
