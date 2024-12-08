@@ -2,6 +2,7 @@
 using MusicTimeServa.Model;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using System.Security.Claims;
 
 namespace MusicTimeServa.Services
 {
@@ -26,9 +27,9 @@ namespace MusicTimeServa.Services
         {
             var user = ValidateUserAndPassword(loginDTO);
 
-            if(user != null)
+            if (user != null)
             {
-                var token = SetJwtTokenToUser(user);
+                var token = GenerateJwtToken(user);
                 user.Token = new JwtSecurityTokenHandler().WriteToken(token);
 
                 return user;
@@ -47,22 +48,28 @@ namespace MusicTimeServa.Services
             return null;
         }
 
-        private SecurityToken SetJwtTokenToUser(User user)
+        private SecurityToken GenerateJwtToken(User user)
         {
             var issuer = _configuration.GetSection("Jwt:Issuer").Get<string>();
             var durationInMinute = _configuration.GetSection("Jwt:DurationInMinutes").Get<int>();
 
-            var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("Jwt:Key").Get<string>()));
+            var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Name),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iss, _configuration["Jwt:Issuer"])
+            };
 
             var jwtSecurityToken = new JwtSecurityToken(
                issuer: issuer,
-               audience: null,
-               claims: null,
+               audience: _configuration["Jwt:Audience"],
+               claims: claims,
                expires: DateTime.UtcNow.AddMinutes(durationInMinute),
                signingCredentials: signingCredentials);
 
-            
             return jwtSecurityToken;
         }
     }

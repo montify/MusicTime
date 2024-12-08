@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MusicTimeServa.Model;
 using MusicTimeServa.Services;
 
@@ -16,6 +17,7 @@ namespace MusicTimeServa.Controllers
         }
 
         [HttpGet()]
+        [Authorize]
         public ActionResult<List<Entry>> GetEntry()
         {
             var entries = m_entrieService.GetAllEntrys();
