@@ -1,7 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using MusicTimeServa.Model;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
 
 namespace MusicTimeServa.Services
@@ -25,7 +24,7 @@ namespace MusicTimeServa.Services
 
         public User? Login(UserLoginDTO loginDTO)
         {
-            var user = ValidateUser(loginDTO);
+            var user = ValidateUserAndPassword(loginDTO);
 
             if(user != null)
             {
@@ -38,7 +37,7 @@ namespace MusicTimeServa.Services
             return null;
         }
 
-        private User? ValidateUser(UserLoginDTO userLoginDTO)
+        private User? ValidateUserAndPassword(UserLoginDTO userLoginDTO)
         {
             var user = _context.Set<User>().Where(u => userLoginDTO.Email == u.Email && userLoginDTO.Password == u.Password).ToList().FirstOrDefault();
 

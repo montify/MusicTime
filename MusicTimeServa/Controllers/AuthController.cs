@@ -44,8 +44,7 @@ namespace MusicTimeServa.Controllers
                 //Generate JWT token
                 return StatusCode(StatusCodes.Status200OK, user);
             }
-               
-
+            
             return StatusCode(StatusCodes.Status400BadRequest, null);
         }
     }
