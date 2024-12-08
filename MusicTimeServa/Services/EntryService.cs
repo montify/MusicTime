@@ -2,7 +2,7 @@
 
 namespace MusicTimeServa.Services
 {
-    public class EntryService : IEntrieService
+    public class EntryService : IEntryService
     {
         private DataContext _context;
 

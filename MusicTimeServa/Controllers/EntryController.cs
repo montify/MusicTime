@@ -8,9 +8,9 @@ namespace MusicTimeServa.Controllers
     [Route("[controller]")]
     public class EntryController : ControllerBase
     {
-        public IEntrieService m_entrieService { get; set; }
+        public IEntryService m_entrieService { get; set; }
 
-        public EntryController(IEntrieService entrie)
+        public EntryController(IEntryService entrie)
         {
             m_entrieService = entrie;
         }

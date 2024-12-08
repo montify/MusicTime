@@ -2,7 +2,7 @@
 
 namespace MusicTimeServa.Services
 {
-    public interface IEntrieService
+    public interface IEntryService
     {
         public List<Entry> GetAllEntrys();
         public void AddEntry(Entry entry);

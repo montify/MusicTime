@@ -7,7 +7,7 @@
 <div class="container ">
     <h3 class="text-center">♥Music and Guitar♥</h3>
     <div class="d-flex justify-content-center">
-        <button type="button" class="btn btn-primary" @onclick="(Action<MouseEventArgs>)OnAddShow">Add Entry</button>
+        <button type="button" class="btn btn-primary" @onclick="OnAddShow">Add Entry</button>
     </div>
     @if (isAddEntryToggle)
     {
@@ -21,6 +21,8 @@
     }
     else
     {
+        //TODO: Check when edit data if values are valid( Duration > 0 || string.empty(Description))
+        //Maybe use ValueChanged callback?
         <MudDataGrid EditTrigger="DataGridEditTrigger.OnRowClick" T = "Entry" Bordered ="true" CommittedItemChanges="@CommitedItemChange" EditMode="DataGridEditMode.Form" ReadOnly = "false" Items ="@Entries" >
             <Columns>
                 <PropertyColumn Editable="false" Property="x => x.DateToString()" Title="Date"></PropertyColumn>
@@ -28,7 +30,7 @@
                 <PropertyColumn Property="x => x.Description" Title="Description"></PropertyColumn>
                 <TemplateColumn>
                     <CellTemplate>          
-                        <MudButton @onclick=" () => OpenDeleteDialogAsync(context.Item.Id)" Variant="Variant.Filled">ss</MudButton>
+                        <MudButton @onclick=" () => OpenDeleteDialogAsync(context.Item.Id)" Variant="Variant.Filled">Delete</MudButton>
                     </CellTemplate>
                 </TemplateColumn>
             </Columns>
@@ -48,11 +50,7 @@
 
     public async Task OnAddEntry()
     {
-        if (EntryService is not null)
-        {
-            Entries = (await EntryService.GetAllEntries()).ToList();
-            Entries.Reverse();
-        }
+        await FetchList();
     }
 
     private void OnAddShow(MouseEventArgs e)
@@ -62,45 +60,42 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await FetchList();
+    }
+
+    private async Task FetchList()
+    {
         if (EntryService is not null)
         {
             Entries = (await EntryService.GetAllEntries()).ToList();
             Entries.Reverse();
+            StateHasChanged();
         }
     }
-
-    public void CommitedItemChange(Entry entry)
+    public async void CommitedItemChange(Entry entry)
     {
-
         if (EntryService is not null)
-            EntryService.UpdateEntry(entry);
+            await EntryService.UpdateEntry(entry);
+
+        await FetchList();
     }
 
     private async void OpenDeleteDialogAsync(int entryId)
     {
-        var dialog = await DialogService.ShowAsync<DeleteDialog>("Wanna Delete?");
+        var parameter = new DialogParameters<int>();
+        parameter.Add("EntryId", entryId);
+        var dialog = await DialogService.ShowAsync<DeleteDialog>("Wanna Delete?", parameter);
         var result = await dialog.Result;
 
         if(!result.Canceled)
-        {
             DeleteEntry(entryId);
-        }
     }
 
     public async void DeleteEntry(int entryId)
     {
-        //Maybe better to Delete from Db and then fetch the whole db again instead of manage the local List seperatly
-
-        //Delete from DB
         if (EntryService is not null)
             await EntryService.DeleteEntry(entryId);
 
-        var entryToDelete = Entries.FirstOrDefault(e => e.Id == entryId);
-
-        //Delete From LocaList
-        if (entryToDelete is not null)
-            Entries.Remove(entryToDelete);
-
-        StateHasChanged();
+        await FetchList();
     }
 }

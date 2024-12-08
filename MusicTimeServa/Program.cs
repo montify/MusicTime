@@ -28,7 +28,7 @@ builder.Services.AddDbContext<DataContext>(
     options => options.UseSqlite(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<IEntrieService, EntryService>();
+builder.Services.AddScoped<IEntryService, EntryService>();
 
 var app = builder.Build();
 app.UseCors("AllowBlazorLocalhost");
