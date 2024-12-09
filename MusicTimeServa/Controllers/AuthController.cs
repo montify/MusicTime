@@ -16,11 +16,16 @@ namespace MusicTimeServa.Controllers
         }
 
         [HttpPost("Register")]
-        public ActionResult<User> Register(UserRegisterDTO userDto)
+        public ApiResponse Register(UserRegisterDTO userDto)
         {
-            if(userDto == null || string.IsNullOrEmpty(userDto.Name) || string.IsNullOrEmpty(userDto.Email))
+            if (userDto == null || string.IsNullOrEmpty(userDto.Name) || string.IsNullOrEmpty(userDto.Email))
             {
-                return StatusCode(StatusCodes.Status204NoContent, "User cant be null");
+                return new ApiResponse
+                {
+                    IsSuccess = false,
+                    Message = "User cant be null",
+                    Result = null
+                };
             }
 
             var user = new User
@@ -32,20 +37,36 @@ namespace MusicTimeServa.Controllers
 
             m_UserService.Register(user);
 
-            return user;
+            return new ApiResponse
+            {
+                IsSuccess = true,
+                Message = "User generated!",
+                Result = user
+            };
         }
+
         [HttpPost("Login")]
-        public ActionResult<User> Login(UserLoginDTO userLoginDto)
+        public ApiResponse Login(UserLoginDTO userLoginDto)
         {
             var user = m_UserService.Login(userLoginDto);
 
-            if (user is not null)
+            if (user is null)
             {
-                //Generate JWT token
-                return StatusCode(StatusCodes.Status200OK, user);
+                return new ApiResponse
+                {
+                    IsSuccess = false,
+                    Message = "User cant be null",
+                    Result = null
+                };
+
             }
-            
-            return StatusCode(StatusCodes.Status400BadRequest, null);
+
+            return new ApiResponse
+            {
+                IsSuccess = true,
+                Message = "Success",
+                Result = user
+            };
         }
     }
 }

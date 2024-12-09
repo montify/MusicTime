@@ -17,68 +17,123 @@ namespace MusicTimeServa.Controllers
         }
 
         [HttpGet()]
-        [Authorize]
-        public ActionResult<List<Entry>> GetEntry()
+      //  [Authorize]
+        public ApiResponse GetEntry()
         {
             var entries = m_entrieService.GetAllEntrys();
-
+           
             if (entries == null)
-                return StatusCode(StatusCodes.Status204NoContent, "Cant fetch entrys");
+                return new ApiResponse
+                {
+                    IsSuccess = false,
+                    Message = "No Entry in Database",
+                    Result = null
+                };
 
 
-            return StatusCode(StatusCodes.Status200OK, entries);
+            return new ApiResponse
+            {
+                IsSuccess = true,
+                Message = "Success",
+                Result = entries
+            };
         }
 
         [HttpPost()]
-        public ActionResult AddEntry(Entry entry)
+        public ApiResponse AddEntry(Entry entry)
         {
             //TODO Detect if any field is empy not just the object itself is null
             if (entry.CheckIfValid() is false)
-                return StatusCode(StatusCodes.Status400BadRequest, "Entry cant be null");
+            {
+                return new ApiResponse
+                {
+                    IsSuccess = false,
+                    Message = "Entry cant be null!",
+                    Result = null
+                };
+            }
 
             try
             {
                 m_entrieService.AddEntry(entry);
-                return StatusCode(StatusCodes.Status201Created, $"Entry: {entry.Description} added!");
+                return new ApiResponse
+                {
+                    IsSuccess = true,
+                    Message = "Success",
+                    Result = entry
+                };
             }
             catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+                return new ApiResponse
+                {
+                    IsSuccess = false,
+                    Message = e.Message,
+                    Result = null
+                };
             }
         }
 
         [HttpDelete()]
-        public ActionResult DeleteEntry(int id)
+        public ApiResponse DeleteEntry(int id)
         {
             if (id <= 0)
-                return StatusCode(StatusCodes.Status400BadRequest, "Id must be > 0");
+                return new ApiResponse
+                {
+                    IsSuccess = false,
+                    Message = "Id must be > 0",
+                    Result = null
+                };
 
             try
             {
                 m_entrieService.DeleteEntryFromId(id);
-                return StatusCode(StatusCodes.Status200OK, "Entry Deleted");
+                return new ApiResponse
+                {
+                    IsSuccess = true,
+                    Message = "Entry Deleted",
+                    Result = null
+                };
             }
             catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status400BadRequest, e.Message);
+                return new ApiResponse
+                {
+                    IsSuccess = false,
+                    Message = e.Message,
+                    Result = null
+                };
             }
         }
 
         [HttpPut]
-        public ActionResult UpdateEntry(Entry entry)
+        public ApiResponse UpdateEntry(Entry entry)
         {
             if (entry == null)
-                return StatusCode(StatusCodes.Status400BadRequest, "Entry cant be null");
-
+                return new ApiResponse
+                {
+                    IsSuccess = false,
+                    Message = "Entry cant be null",
+                    Result = null
+                };
             try
             {
                 m_entrieService.UpdateUser(entry);
-                return StatusCode(StatusCodes.Status200OK, "Entry Updated");
+                return new ApiResponse
+                {
+                    IsSuccess = true,
+                    Message = "Entry Updated!",
+                    Result = entry
+                };
             }
             catch (Exception e)
             {
-
-                return StatusCode(StatusCodes.Status400BadRequest, e.Message);
+                return new ApiResponse
+                {
+                    IsSuccess = false,
+                    Message = e.Message,
+                    Result = null
+                };
             }
         }
     }
