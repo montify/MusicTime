@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using MusicTimeServa.Model;
 using MusicTimeServa.Services;
 
@@ -8,15 +9,17 @@ namespace MusicTimeServa.Controllers
     [Route("[controller]")]
     public class AuthController : ControllerBase
     {
-        public IUserService m_UserService { get; set; }
+        private readonly IUserService m_UserService;
+        private readonly IMapper m_Mapper;
 
-        public AuthController(IUserService userService)
+        public AuthController(IUserService userService, IMapper mapper)
         {
             m_UserService = userService;
+            m_Mapper = mapper;
         }
 
         [HttpPost("Register")]
-        public ApiResponse Register(UserRegisterDTO userDto)
+        public ApiResponse Register(UserRegisterRequestDTO userDto)
         {
             if (userDto == null || string.IsNullOrEmpty(userDto.Name) || string.IsNullOrEmpty(userDto.Email))
             {
@@ -24,31 +27,28 @@ namespace MusicTimeServa.Controllers
                 {
                     IsSuccess = false,
                     Message = "User cant be null",
-                    Result = null
+                    Payload = null
                 };
             }
 
-            var user = new User
-            {
-                Name = userDto.Name,
-                Email = userDto.Email,
-                Password = userDto.Password,
-            };
-
+            var user = m_Mapper.Map<User>(userDto);
+          
             m_UserService.Register(user);
 
             return new ApiResponse
             {
                 IsSuccess = true,
                 Message = "User generated!",
-                Result = user
+                Payload = m_Mapper.Map<UserRegisterResponseDTO>(user)
             };
         }
 
         [HttpPost("Login")]
-        public ApiResponse Login(UserLoginDTO userLoginDto)
+        public ApiResponse Login(UserLoginRequestDTO userLoginDto)
         {
-            var user = m_UserService.Login(userLoginDto);
+            var user = m_Mapper.Map<User>(userLoginDto);
+
+            user = m_UserService.Login(user);
 
             if (user is null)
             {
@@ -56,7 +56,7 @@ namespace MusicTimeServa.Controllers
                 {
                     IsSuccess = false,
                     Message = "User cant be null",
-                    Result = null
+                    Payload = null
                 };
 
             }
@@ -65,7 +65,7 @@ namespace MusicTimeServa.Controllers
             {
                 IsSuccess = true,
                 Message = "Success",
-                Result = user
+                Payload = m_Mapper.Map<UserLoginResponseDTO>(user)
             };
         }
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MusicTimeServa.Model;
 using MusicTimeServa.Services;
@@ -9,11 +10,13 @@ namespace MusicTimeServa.Controllers
     [Route("[controller]")]
     public class EntryController : ControllerBase
     {
-        public IEntryService m_entrieService { get; set; }
+        private readonly IEntryService m_entrieService;
+        private readonly IMapper m_Mapper;
 
-        public EntryController(IEntryService entrie)
+        public EntryController(IEntryService entryService, IMapper mapper)
         {
-            m_entrieService = entrie;
+            m_entrieService = entryService;
+            m_Mapper = mapper;
         }
 
         [HttpGet()]
@@ -27,7 +30,7 @@ namespace MusicTimeServa.Controllers
                 {
                     IsSuccess = false,
                     Message = "No Entry in Database",
-                    Result = null
+                    Payload = null
                 };
 
 
@@ -35,13 +38,15 @@ namespace MusicTimeServa.Controllers
             {
                 IsSuccess = true,
                 Message = "Success",
-                Result = entries
+                Payload = entries
             };
         }
 
         [HttpPost()]
-        public ApiResponse AddEntry(Entry entry)
+        public ApiResponse AddEntry(AddEntryRequestDTO entryDto)
         {
+            var entry = m_Mapper.Map<Entry>(entryDto);
+
             //TODO Detect if any field is empy not just the object itself is null
             if (entry.CheckIfValid() is false)
             {
@@ -49,7 +54,7 @@ namespace MusicTimeServa.Controllers
                 {
                     IsSuccess = false,
                     Message = "Entry cant be null!",
-                    Result = null
+                    Payload = null
                 };
             }
 
@@ -60,7 +65,7 @@ namespace MusicTimeServa.Controllers
                 {
                     IsSuccess = true,
                     Message = "Success",
-                    Result = entry
+                    Payload = entry
                 };
             }
             catch (Exception e)
@@ -69,7 +74,7 @@ namespace MusicTimeServa.Controllers
                 {
                     IsSuccess = false,
                     Message = e.Message,
-                    Result = null
+                    Payload = null
                 };
             }
         }
@@ -82,7 +87,7 @@ namespace MusicTimeServa.Controllers
                 {
                     IsSuccess = false,
                     Message = "Id must be > 0",
-                    Result = null
+                    Payload = null
                 };
 
             try
@@ -92,7 +97,7 @@ namespace MusicTimeServa.Controllers
                 {
                     IsSuccess = true,
                     Message = "Entry Deleted",
-                    Result = null
+                    Payload = null
                 };
             }
             catch (Exception e)
@@ -101,7 +106,7 @@ namespace MusicTimeServa.Controllers
                 {
                     IsSuccess = false,
                     Message = e.Message,
-                    Result = null
+                    Payload = null
                 };
             }
         }
@@ -114,7 +119,7 @@ namespace MusicTimeServa.Controllers
                 {
                     IsSuccess = false,
                     Message = "Entry cant be null",
-                    Result = null
+                    Payload = null
                 };
             try
             {
@@ -123,7 +128,7 @@ namespace MusicTimeServa.Controllers
                 {
                     IsSuccess = true,
                     Message = "Entry Updated!",
-                    Result = entry
+                    Payload = entry
                 };
             }
             catch (Exception e)
@@ -132,7 +137,7 @@ namespace MusicTimeServa.Controllers
                 {
                     IsSuccess = false,
                     Message = e.Message,
-                    Result = null
+                    Payload = null
                 };
             }
         }

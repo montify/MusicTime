@@ -1,9 +1,9 @@
-﻿namespace MusicTimeServa.Model
+﻿namespace MusicTimeClient
 {
-    public class ApiResponse
+    public class ApiResponse<T>
     {
         public bool IsSuccess { get; set; }
         public string Message { get; set; } = string.Empty;
-        public object? Result { get; set; }
+        public T Payload { get; set; }
     }
 }

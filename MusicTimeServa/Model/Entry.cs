@@ -3,7 +3,7 @@
     public class Entry
     {
         public int Id { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime Date { get; set; } = DateTime.Now.Date;
         public int DurationInMinutes { get; set; }
         public bool IsFinished { get; set; }
         public string Description { get; set; }
@@ -22,4 +22,11 @@
             return true;
         }
     }
+
+    public class AddEntryRequestDTO()
+    {
+        public int DurationInMinutes { get; set; }
+        public string Description { get; set; }
+    }
+
 }

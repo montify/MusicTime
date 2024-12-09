@@ -5,6 +5,6 @@ namespace MusicTimeServa.Services
     public interface IUserService
     {
         public void Register(User user); 
-        public User? Login(UserLoginDTO loginDTO);
+        public User? Login(User loginDTO);
     }
 }

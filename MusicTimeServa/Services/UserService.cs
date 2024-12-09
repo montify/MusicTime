@@ -23,9 +23,9 @@ namespace MusicTimeServa.Services
             _context.SaveChanges();
         }
 
-        public User? Login(UserLoginDTO loginDTO)
+        public User? Login(User user)
         {
-            var user = ValidateUserAndPassword(loginDTO);
+            user = ValidateUserAndPassword(user);
 
             if (user != null)
             {
@@ -38,9 +38,9 @@ namespace MusicTimeServa.Services
             return null;
         }
 
-        private User? ValidateUserAndPassword(UserLoginDTO userLoginDTO)
+        private User? ValidateUserAndPassword(User user)
         {
-            var user = _context.Set<User>().Where(u => userLoginDTO.Email == u.Email && userLoginDTO.Password == u.Password).ToList().FirstOrDefault();
+             user = _context.Set<User>().Where(u => user.Email == u.Email && user.Password == u.Password).ToList().FirstOrDefault();
 
             if (user is not null)
                 return user;
