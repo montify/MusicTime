@@ -10,10 +10,17 @@ namespace MusicTimeClient.Services
     public class AuthService : IAuthService
     {
         private readonly HttpClient m_httpClient;
+        private readonly LocalStorage m_localStorage;
 
-        public AuthService(HttpClient httpClient)
+        public AuthService(HttpClient httpClient, LocalStorage localStorage)
         {
             m_httpClient = httpClient;
+            m_localStorage = localStorage;
+        }
+
+        public Task<bool> IsLoggedIn()
+        {
+            return m_localStorage.ContainsKey("jwtToken");
         }
 
         public async Task<User> Login(UserLoginRequestDTO userRequest)
@@ -30,7 +37,14 @@ namespace MusicTimeClient.Services
                 Token = apiResponse.Payload.Token
             };
 
+            //STORE JWT
+            await m_localStorage.AddItem("jwtToken", user.Token);
             return user;
+        }
+
+        public async Task Logout()
+        {
+            await m_localStorage.RemoveItem("jwtToken");
         }
 
         public async Task<ApiResponse> Register(UserRegisterRequestDTO userRequest)
@@ -42,9 +56,6 @@ namespace MusicTimeClient.Services
                 return new ApiResponse { IsSuccess = false, Message = "Register failed!" };
 
             return new ApiResponse { IsSuccess = true, Message = "Successfully Registered" };
-
-        }
-
-       
+        }   
     }
 }
