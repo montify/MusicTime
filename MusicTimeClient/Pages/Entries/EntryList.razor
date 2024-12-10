@@ -24,16 +24,19 @@
     {
         //TODO: Check when edit data if values are valid( Duration > 0 || string.empty(Description))
         //Maybe use ValueChanged callback?
-        <MudDataGrid EditTrigger="DataGridEditTrigger.OnRowClick" T="Entry" Bordered="true" CommittedItemChanges="@CommitedItemChange" EditMode="DataGridEditMode.Form" ReadOnly="false" Items="@Entries">
+        <MudDataGrid EditTrigger="DataGridEditTrigger.OnRowClick" T="Entry" Bordered="true" CommittedItemChanges="@CommitedItemChange" EditMode="DataGridEditMode.Form" ReadOnly="!IsLoggedIn" Items="@Entries">
             <Columns>
                 <PropertyColumn Editable="false" Property="x => x.DateToString()" Title="Date"></PropertyColumn>
                 <PropertyColumn Property="x => x.DurationInMinutes" Title="Time"></PropertyColumn>
                 <PropertyColumn Property="x => x.Description" Title="Description"></PropertyColumn>
+                @if (IsLoggedIn)
+                {
                 <TemplateColumn>
                     <CellTemplate>
                         <MudButton @onclick=" () => OpenDeleteDialogAsync(context.Item.Id)" Variant="Variant.Filled">Delete</MudButton>
                     </CellTemplate>
                 </TemplateColumn>
+                }
             </Columns>
         </MudDataGrid>
     }
@@ -42,12 +45,12 @@
 @code {
     [Inject]
     public IEntryService? EntryService { get; set; }
-    [Parameter]
-    public int EntryId { get; set; }
-    [Parameter]
-    public EventCallback<int> OnDelete { get; set; }
+    [Inject]
+    public IAuthService? AuthService { get; set; }
+
     public List<Entry> Entries = new List<Entry>();
     public bool isAddEntryToggle;
+    public bool IsLoggedIn;
 
     public async Task OnAddEntry()
     {
@@ -61,6 +64,9 @@
 
     protected override async Task OnInitializedAsync()
     {
+        IsLoggedIn = await AuthService.IsLoggedIn();
+        
+
         await FetchList();
     }
 

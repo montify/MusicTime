@@ -1,11 +1,61 @@
 ﻿@page "/"
+@inject NavigationManager _navigationManager
+@using MusicTimeClient.Contracts
 @using MusicTimeClient.Pages.Auth
 @using MusicTimeClient.Pages.Entries;
 
-<!-- 
-<Register/>
 
-<Login/>
--->
+<div class="justify-content-center w-100">
 
-<EntryList />
+    @if(isLoggedIn)
+    {
+        <MudButton OnClick="OnLoggout">Logout</MudButton>
+    }
+    else
+    {
+        <MudButton OnClick="@ToggleOpen">Login</MudButton>
+    }
+
+    <MudPopover Class="px-4 pt-4" Open="m_Open">
+        <Login OnLogginSuccess="OnLogginSuccess" />
+        <MudButton OnClick="@ToggleOpen">Close</MudButton>
+    </MudPopover>
+
+    <EntryList />
+</div>
+
+@code{
+    public bool m_Open;
+    private void ToggleOpen() => m_Open = !m_Open;
+
+    [Inject]
+    public LocalStorage m_localStorage { get; set; }
+    [Inject]
+    public IAuthService AuthService { get; set; }
+
+    private bool isLoggedIn;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (await AuthService.IsLoggedIn())
+            isLoggedIn = true;
+
+        StateHasChanged();
+    }
+
+    public void OnLogginSuccess()
+    {
+        m_Open = false;
+        isLoggedIn = true;
+        StateHasChanged();
+        _navigationManager.NavigateTo("/", true);
+    }
+
+    public async void OnLoggout()
+    {
+        await AuthService.Logout();
+        isLoggedIn = false; 
+        StateHasChanged();
+        _navigationManager.NavigateTo("/", true);
+    }
+}

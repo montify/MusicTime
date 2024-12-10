@@ -20,7 +20,6 @@ namespace MusicTimeServa.Controllers
         }
 
         [HttpGet()]
-      //  [Authorize]
         public ApiResponse GetEntry()
         {
             var entries = m_entrieService.GetAllEntrys();
@@ -80,6 +79,7 @@ namespace MusicTimeServa.Controllers
         }
 
         [HttpDelete()]
+        [Authorize]
         public ApiResponse DeleteEntry(int id)
         {
             if (id <= 0)

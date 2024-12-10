@@ -3,9 +3,6 @@ using MusicTimeClient.Contracts;
 using MusicTimeClient.Models;
 using MusicTimeClient.Models.DTOs.Response;
 using System.Net.Http.Json;
-using System.Reflection.Metadata.Ecma335;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace MusicTimeClient.Services
 {
@@ -22,14 +19,20 @@ namespace MusicTimeClient.Services
 
         public async Task<Entry[]> GetAllEntries()
         {
-           var response = await m_httpClient.GetFromJsonAsync<ApiResponse<EntryResponseDTO[]>>("Entry");
+            try
+            {
+                var response = await m_httpClient.GetFromJsonAsync<ApiResponse<EntryResponseDTO[]>>("Entry");
+                if (response is null || !response.IsSuccess || response.Payload is null)
+                    return Array.Empty<Entry>();
 
-            if (response is null || !response.IsSuccess || response.Payload is null)
+                var entrys = m_Mapper.Map<EntryResponseDTO[], Entry[]>(response.Payload);
+
+                return entrys;
+            }
+            catch (Exception)
+            {
                 return Array.Empty<Entry>();
-
-            var entrys = m_Mapper.Map<EntryResponseDTO[], Entry[]>(response.Payload);
-
-            return entrys;
+            }
         }
 
         public async Task DeleteEntry(int entryId) => await m_httpClient.DeleteAsync($"https://localhost:7207/Entry?id={entryId}");

@@ -7,5 +7,7 @@ namespace MusicTimeClient.Contracts
     {
         public Task<ApiResponse> Register(UserRegisterRequestDTO user);
         public Task<User> Login(UserLoginRequestDTO userRequest);
+        public Task Logout();
+        public Task<bool> IsLoggedIn();
     }
 }

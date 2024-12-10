@@ -3,8 +3,8 @@
 @using MusicTimeClient.Models
 @using MusicTimeClient.Models.DTOs.Request
 
-<h3>Register</h3>
-
+<b class="d-flex justify-content-center">Login</b>
+<br/>
 <div class="d-flex justify-content-center">
     <EditForm Model="m_Model" OnValidSubmit="Submit">
         <div class="form-group row text-center">
@@ -21,7 +21,6 @@
             {
                 @Message
             }
-
         </div>
     </EditForm>
 </div>
@@ -33,6 +32,9 @@
     public string Message { get; set; }
     private UserLoginRequestDTO m_Model = new UserLoginRequestDTO();
 
+    [Parameter]
+    public EventCallback OnLogginSuccess { get; set; }
+   
     public async void Submit()
     {
         if (AuthService is not null)
@@ -40,9 +42,16 @@
             var user = await AuthService.Login(m_Model);
 
             if (user is null)
+            {
                 Message = "Cant login";
+            }    
             else
-                Message = user.Token;
-        }    
+            {
+                if (OnLogginSuccess.HasDelegate)
+                    await OnLogginSuccess.InvokeAsync();
+
+            }
+
+        }
     }
 }
