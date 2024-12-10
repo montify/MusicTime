@@ -1,9 +1,9 @@
-﻿namespace MusicTimeClient.Models.Entry
+﻿namespace MusicTimeClient.Models
 {
     public class Entry
     {
         public int Id { get; set; }
-        public DateTime Date { get; set; } = DateTime.Now.Date;
+        public DateTime Date { get; set; }
         public int DurationInMinutes { get; set; }
         public bool IsFinished { get; set; }
         public string Description { get; set; }

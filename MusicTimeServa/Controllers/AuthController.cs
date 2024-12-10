@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using MusicTimeServa.Model;
+using MusicTimeServa.Model.DTOs.Request;
+using MusicTimeServa.Model.DTOs.Response;
 using MusicTimeServa.Services;
 
 namespace MusicTimeServa.Controllers
@@ -21,7 +23,8 @@ namespace MusicTimeServa.Controllers
         [HttpPost("Register")]
         public ApiResponse Register(UserRegisterRequestDTO userDto)
         {
-            if (userDto == null || string.IsNullOrEmpty(userDto.Name) || string.IsNullOrEmpty(userDto.Email))
+            //TODO: More richer error message
+            if (userDto == null || string.IsNullOrEmpty(userDto.Name) || string.IsNullOrEmpty(userDto.Email) || userDto.Password <= 0)
             {
                 return new ApiResponse
                 {
@@ -44,7 +47,7 @@ namespace MusicTimeServa.Controllers
         }
 
         [HttpPost("Login")]
-        public ApiResponse Login(UserLoginRequestDTO userLoginDto)
+        public ApiResponse<UserLoginResponseDTO> Login(UserLoginRequestDTO userLoginDto)
         {
             var user = m_Mapper.Map<User>(userLoginDto);
 
@@ -52,16 +55,16 @@ namespace MusicTimeServa.Controllers
 
             if (user is null)
             {
-                return new ApiResponse
+                return new ApiResponse<UserLoginResponseDTO>
                 {
                     IsSuccess = false,
-                    Message = "User cant be null",
+                    Message = "User login Failed",
                     Payload = null
                 };
 
             }
 
-            return new ApiResponse
+            return new ApiResponse<UserLoginResponseDTO>
             {
                 IsSuccess = true,
                 Message = "Success",

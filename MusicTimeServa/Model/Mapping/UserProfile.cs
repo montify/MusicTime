@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using MusicTimeServa.Model.DTOs.Request;
+using MusicTimeServa.Model.DTOs.Response;
 
 namespace MusicTimeServa.Model.Mapping
 {
@@ -6,15 +8,11 @@ namespace MusicTimeServa.Model.Mapping
     {
         public UserProfile()
         {
-            //AuthController
             CreateMap<UserRegisterRequestDTO, User>();
             CreateMap<User, UserRegisterResponseDTO>();
             CreateMap<UserLoginRequestDTO, User>();
             CreateMap<User, UserLoginRequestDTO>();
-            CreateMap<User, UserLoginResponseDTO>();
-
-            //EntryController
-            CreateMap<AddEntryRequestDTO, Entry>();
+            CreateMap<User, UserLoginResponseDTO>();  
         }
     }
 }
