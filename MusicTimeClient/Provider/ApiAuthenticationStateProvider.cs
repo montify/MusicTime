@@ -20,11 +20,12 @@ namespace MusicTimeClient.Provider
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             var token = await m_localSotrage.GetItem("jwtToken");
-           
+            var nobody = new ClaimsPrincipal(new ClaimsIdentity());
+
             if (string.IsNullOrEmpty(token))
             {
                 //empty ClaimsPrincipal means no permission to loggin
-                var nobody = new ClaimsPrincipal(new ClaimsIdentity());
+               new ClaimsPrincipal(new ClaimsIdentity());
                 return new AuthenticationState(nobody);
             }
 
@@ -32,8 +33,8 @@ namespace MusicTimeClient.Provider
          
             if (tokenContent.ValidTo < DateTime.Now)
             {
-               // await m_localSotrage.RemoveItem("jwtToken");
-               // return new AuthenticationState(user);
+                await m_localSotrage.RemoveItem("jwtToken");
+                return new AuthenticationState(nobody);
             }
             var claims = new List<Claim>
             {

@@ -67,7 +67,7 @@ namespace MusicTimeServa.Services
                issuer: issuer,
                audience: _configuration["Jwt:Audience"],
                claims: claims,
-               expires: DateTime.UtcNow.AddMinutes(durationInMinute),
+               expires: DateTime.UtcNow.Add(new TimeSpan(0, 2, 0, 0, 0, 0)), //TODO: Figure out why its lag behin 1 hour, from wintertime, so i need to add 2 hours..
                signingCredentials: signingCredentials);
 
             return jwtSecurityToken;
