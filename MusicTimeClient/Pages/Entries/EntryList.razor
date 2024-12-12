@@ -1,4 +1,5 @@
 ﻿@page "/entryList"
+@using Microsoft.AspNetCore.Components.Authorization
 @using MudBlazor
 @using MusicTimeClient.Contracts
 @using MusicTimeClient.Models
@@ -22,23 +23,36 @@
     }
     else
     {
-        //TODO: Check when edit data if values are valid( Duration > 0 || string.empty(Description))
-        //Maybe use ValueChanged callback?
-        <MudDataGrid EditTrigger="DataGridEditTrigger.OnRowClick" T="Entry" Bordered="true" CommittedItemChanges="@CommitedItemChange" EditMode="DataGridEditMode.Form" ReadOnly="!IsLoggedIn" Items="@Entries">
-            <Columns>
-                <PropertyColumn Editable="false" Property="x => x.DateToString()" Title="Date"></PropertyColumn>
-                <PropertyColumn Property="x => x.DurationInMinutes" Title="Time"></PropertyColumn>
-                <PropertyColumn Property="x => x.Description" Title="Description"></PropertyColumn>
-                @if (IsLoggedIn)
-                {
-                <TemplateColumn>
-                    <CellTemplate>
-                        <MudButton @onclick=" () => OpenDeleteDialogAsync(context.Item.Id)" Variant="Variant.Filled">Delete</MudButton>
-                    </CellTemplate>
-                </TemplateColumn>
-                }
-            </Columns>
-        </MudDataGrid>
+            <AuthorizeView>
+            <Authorized>
+                <MudDataGrid EditTrigger="DataGridEditTrigger.OnRowClick" T="Entry" Bordered="true" CommittedItemChanges="@CommitedItemChange" EditMode="DataGridEditMode.Form" ReadOnly="false" Items="@Entries">
+                    <Columns>
+                        <PropertyColumn Editable="false" Property="x => x.DateToString()" Title="Date"></PropertyColumn>
+                        <PropertyColumn Property="x => x.DurationInMinutes" Title="Time"></PropertyColumn>
+                        <PropertyColumn Property="x => x.Description" Title="Description"></PropertyColumn>
+                        <TemplateColumn>
+                            <CellTemplate Context="itemContext">
+                                <MudButton @onclick="() => OpenDeleteDialogAsync(itemContext.Item.Id)" Color="Color.Secondary" Variant="Variant.Filled">Delete</MudButton>
+                            </CellTemplate>
+                        </TemplateColumn>
+                    </Columns>
+                </MudDataGrid>
+            </Authorized>
+            <NotAuthorized> <!-- just render the same thin but with Button disabled-->
+                <MudDataGrid EditTrigger="DataGridEditTrigger.OnRowClick" T="Entry" Bordered="true" CommittedItemChanges="@CommitedItemChange" EditMode="DataGridEditMode.Form" ReadOnly="!IsLoggedIn" Items="@Entries">
+                    <Columns>
+                        <PropertyColumn Editable="false" Property="x => x.DateToString()" Title="Date"></PropertyColumn>
+                        <PropertyColumn Property="x => x.DurationInMinutes" Title="Time"></PropertyColumn>
+                        <PropertyColumn Property="x => x.Description" Title="Description"></PropertyColumn>
+                        <TemplateColumn>
+                            <CellTemplate Context="itemContext">
+                                <MudButton Disabled="true" @onclick="() => OpenDeleteDialogAsync(itemContext.Item.Id)"  Variant="Variant.Filled">Delete</MudButton>
+                            </CellTemplate>
+                        </TemplateColumn>
+                    </Columns>
+                </MudDataGrid>
+            </NotAuthorized>
+            </AuthorizeView>
     }
 </div>
 
@@ -65,7 +79,6 @@
     protected override async Task OnInitializedAsync()
     {
         IsLoggedIn = await AuthService.IsLoggedIn();
-        
 
         await FetchList();
     }

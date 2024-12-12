@@ -40,7 +40,7 @@ namespace MusicTimeServa.Services
 
         private User? ValidateUserAndPassword(User user)
         {
-             user = _context.Set<User>().Where(u => user.Email == u.Email && user.Password == u.Password).ToList().FirstOrDefault();
+            user = _context.Set<User>().Where(u => user.Email == u.Email && user.Password == u.Password).FirstOrDefault();
 
             if (user is not null)
                 return user;
@@ -58,8 +58,8 @@ namespace MusicTimeServa.Services
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Name),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Iss, _configuration["Jwt:Issuer"])
             };
 

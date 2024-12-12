@@ -34,7 +34,7 @@
     [Inject]
     public IAuthService? AuthService { get; set; }
 
-    public string Message { get; set; }
+    public string Message { get; set; } = string.Empty;
     private UserRegisterRequestDTO m_Model = new UserRegisterRequestDTO();
 
     public async void Submit()
