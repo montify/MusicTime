@@ -38,8 +38,8 @@
                     </Columns>
                 </MudDataGrid>
             </Authorized>
-            <NotAuthorized> <!-- just render the same thin but with Button disabled-->
-                <MudDataGrid EditTrigger="DataGridEditTrigger.OnRowClick" T="Entry" Bordered="true" CommittedItemChanges="@CommitedItemChange" EditMode="DataGridEditMode.Form" ReadOnly="!IsLoggedIn" Items="@Entries">
+            <NotAuthorized> <!-- just render the same thin but with Button disabled and Grid ReadOnly true -->
+                <MudDataGrid EditTrigger="DataGridEditTrigger.OnRowClick" T="Entry" Bordered="true" CommittedItemChanges="@CommitedItemChange" EditMode="DataGridEditMode.Form" ReadOnly="true" Items="@Entries">
                     <Columns>
                         <PropertyColumn Editable="false" Property="x => x.DateToString()" Title="Date"></PropertyColumn>
                         <PropertyColumn Property="x => x.DurationInMinutes" Title="Time"></PropertyColumn>
