@@ -4,14 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MusicTimeServa.Services;
+using MusicTimeServa.Database;
 
 #nullable disable
 
-namespace MusicTimeServa.Migrations
+namespace MusicTimeServa.Migrations.EntryData
 {
-    [DbContext(typeof(DataContext))]
-    [Migration("20241203193430_InitialCreate")]
+    [DbContext(typeof(EntryDataContext))]
+    [Migration("20241213144011_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

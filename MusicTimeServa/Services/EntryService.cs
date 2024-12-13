@@ -1,18 +1,20 @@
-﻿using MusicTimeServa.Model;
+﻿using MusicTimeServa.Database;
+using MusicTimeServa.Model;
 
 namespace MusicTimeServa.Services
 {
     public class EntryService : IEntryService
     {
-        private DataContext _context;
+        private EntryDataContext _context;
 
-        public EntryService(DataContext dbContext)
+        public EntryService(EntryDataContext dbContext)
         {
             _context = dbContext;
         }
+
         public List<Entry> GetAllEntrys()
         {
-            var entries = _context.Set<Entry>().ToList();
+            var entries = _context.Entries.ToList();
             return entries;
         }
 
@@ -20,7 +22,7 @@ namespace MusicTimeServa.Services
         {
             try
             {
-                _context.Add(entry);
+                _context.Entries.Add(entry);
                 _context.SaveChanges();
 
             }
@@ -32,27 +34,27 @@ namespace MusicTimeServa.Services
 
         public void DeleteEntryFromId(int entryId)
         {
-            var user = _context.Set<Entry>().Where(i => i.Id == entryId).FirstOrDefault();
+            var entry = _context.Entries.Where(i => i.Id == entryId).FirstOrDefault();
 
-            if (user == null)
-                throw new Exception("User not exist");
+            if (entry == null)
+                throw new Exception("Entry not exist");
 
             try
             {
-                _context.Remove(user);
+                _context.Entries.Remove(entry);
                 _context.SaveChanges();
             }
             catch (Exception)
             {
-                throw new Exception("Cant remove user");
+                throw new Exception("Cant remove entry");
             }           
         }
 
-        public void UpdateUser(Entry modifiedEntry)
+        public void UpdateEntry(Entry modifiedEntry)
         {
             //TODO: Find a way to Update Specific fields, not just the whole Object,
             //      Exclude Id, Date,... maybe thats why a Object Mapper is useful? ;)
-            var entry = _context.Set<Entry>().Where(i => i.Id == modifiedEntry.Id).FirstOrDefault();
+            var entry = _context.Entries.Where(i => i.Id == modifiedEntry.Id).FirstOrDefault();
 
             if (entry == null)
                 throw new Exception("Entry not exist");

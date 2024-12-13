@@ -25,12 +25,12 @@ namespace MusicTimeClient.Provider
             if (string.IsNullOrEmpty(token))
             {
                 //empty ClaimsPrincipal means no permission to loggin
-               new ClaimsPrincipal(new ClaimsIdentity());
+                new ClaimsPrincipal(new ClaimsIdentity());
                 return new AuthenticationState(nobody);
             }
 
             var tokenContent = jwtSecurityTokenHandler.ReadJwtToken(token);
-         
+
             if (tokenContent.ValidTo < DateTime.Now)
             {
                 await m_localSotrage.RemoveItem("jwtToken");
@@ -40,7 +40,7 @@ namespace MusicTimeClient.Provider
             {
                 new Claim(ClaimTypes.Name, "a")
             };
-            
+
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt")));
         }
 

@@ -1,13 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using MusicTimeServa.Model;
 
-namespace MusicTimeServa.Services
+
+namespace MusicTimeServa.Database
 {
-    public class DataContext : DbContext
+    public class UserIdentityDbContext : IdentityDbContext<User>
     {
         protected readonly IConfiguration Configuration;
 
-        public DataContext(IConfiguration configuration)
+        public UserIdentityDbContext(IConfiguration configuration)
         {
             Configuration = configuration;
         }
@@ -18,7 +22,5 @@ namespace MusicTimeServa.Services
             options.UseSqlite(Configuration.GetConnectionString("WebApiDatabase"));
         }
 
-        public DbSet<Entry> Entries { get; set; }
-        public DbSet<User> Users { get; set; }
     }
 }

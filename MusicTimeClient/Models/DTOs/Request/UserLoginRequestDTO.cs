@@ -8,6 +8,6 @@ namespace MusicTimeClient.Models.DTOs.Request
         [EmailAddress]
         public string Email { get; set; }
         [Required]
-        public int Password { get; set; }
+        public string Password { get; set; }
     }
 }

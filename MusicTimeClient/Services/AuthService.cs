@@ -60,7 +60,7 @@ namespace MusicTimeClient.Services
         public async Task<ApiResponse> Register(UserRegisterRequestDTO userRequest)
         {
             var response = await m_httpClient.PostAsJsonAsync("Auth/Register", userRequest);
-            var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<UserLoginResponseDTO>>();
+            var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse>();
 
             if (!apiResponse.IsSuccess)
                 return new ApiResponse { IsSuccess = false, Message = "Register failed!" };

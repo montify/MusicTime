@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MusicTimeServa.Model;
@@ -8,6 +9,7 @@ namespace MusicTimeServa.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    
     public class EntryController : ControllerBase
     {
         private readonly IEntryService m_entrieService;
@@ -19,7 +21,7 @@ namespace MusicTimeServa.Controllers
             m_Mapper = mapper;
         }
 
-        [HttpGet()]
+        [HttpGet()] 
         public ApiResponse GetEntry()
         {
             var entries = m_entrieService.GetAllEntrys();
@@ -79,7 +81,7 @@ namespace MusicTimeServa.Controllers
         }
 
         [HttpDelete()]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public ApiResponse DeleteEntry(int id)
         {
             if (id <= 0)
@@ -123,7 +125,7 @@ namespace MusicTimeServa.Controllers
                 };
             try
             {
-                m_entrieService.UpdateUser(entry);
+                m_entrieService.UpdateEntry(entry);
                 return new ApiResponse
                 {
                     IsSuccess = true,

@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using MusicTimeServa.Model;
-using MusicTimeServa.Model.DTOs.Request;
 using MusicTimeServa.Model.DTOs.Response;
 using MusicTimeServa.Services;
 
@@ -9,67 +10,26 @@ namespace MusicTimeServa.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+
     public class AuthController : ControllerBase
     {
-        private readonly IUserService m_UserService;
-        private readonly IMapper m_Mapper;
+        private readonly IAuthService m_AuthService;
 
-        public AuthController(IUserService userService, IMapper mapper)
+        public AuthController(IMapper mapper, IAuthService authService)
         {
-            m_UserService = userService;
-            m_Mapper = mapper;
+            m_AuthService = authService;
         }
 
         [HttpPost("Register")]
-        public ApiResponse Register(UserRegisterRequestDTO userDto)
+        public async Task<ApiResponse> Register(RegisterRequest registerRequest)
         {
-            //TODO: More richer error message
-            if (userDto == null || string.IsNullOrEmpty(userDto.Name) || string.IsNullOrEmpty(userDto.Email) || userDto.Password <= 0)
-            {
-                return new ApiResponse
-                {
-                    IsSuccess = false,
-                    Message = "User cant be null",
-                    Payload = null
-                };
-            }
-
-            var user = m_Mapper.Map<User>(userDto);
-          
-            m_UserService.Register(user);
-
-            return new ApiResponse
-            {
-                IsSuccess = true,
-                Message = "User generated!",
-                Payload = m_Mapper.Map<UserRegisterResponseDTO>(user)
-            };
+            return await m_AuthService.Register(registerRequest);
         }
 
         [HttpPost("Login")]
-        public ApiResponse<UserLoginResponseDTO> Login(UserLoginRequestDTO userLoginDto)
+        public async Task<ApiResponse<UserLoginResponseDTO>> Login(LoginRequest loginRequest)
         {
-            var user = m_Mapper.Map<User>(userLoginDto);
-
-            user = m_UserService.Login(user);
-
-            if (user is null)
-            {
-                return new ApiResponse<UserLoginResponseDTO>
-                {
-                    IsSuccess = false,
-                    Message = "User login Failed",
-                    Payload = null
-                };
-
-            }
-
-            return new ApiResponse<UserLoginResponseDTO>
-            {
-                IsSuccess = true,
-                Message = "Success",
-                Payload = m_Mapper.Map<UserLoginResponseDTO>(user)
-            };
+            return await m_AuthService.Login(loginRequest);
         }
     }
 }
