@@ -37,6 +37,6 @@ namespace MusicTimeClient.Services
 
         public async Task DeleteEntry(int entryId) => await m_httpClient.DeleteAsync($"https://localhost:7207/Entry?id={entryId}");
         public async Task AddEntry(Entry entry) => await m_httpClient.PostAsJsonAsync("Entry", entry);
-        public async Task UpdateEntry(Entry entry) => await m_httpClient.PutAsJsonAsync("Entry", entry);   
+        public async Task UpdateEntry(Entry entry) => await m_httpClient.PutAsJsonAsync("Entry", entry);
     }
 }

@@ -9,7 +9,7 @@ namespace MusicTimeServa.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    
+
     public class EntryController : ControllerBase
     {
         private readonly IEntryService m_entrieService;
@@ -21,11 +21,11 @@ namespace MusicTimeServa.Controllers
             m_Mapper = mapper;
         }
 
-        [HttpGet()] 
+        [HttpGet()]
         public ApiResponse GetEntry()
         {
             var entries = m_entrieService.GetAllEntrys();
-           
+
             if (entries == null)
                 return new ApiResponse
                 {

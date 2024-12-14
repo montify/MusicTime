@@ -4,6 +4,6 @@ namespace MusicTimeServa.Model
 {
     public class User : IdentityUser
     {
-      
+
     }
 }

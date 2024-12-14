@@ -64,7 +64,7 @@
 
     public List<Entry> Entries = new List<Entry>();
     public bool isAddEntryToggle;
-    public bool IsLoggedIn;
+
 
     public async Task OnAddEntry()
     {
@@ -78,8 +78,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        IsLoggedIn = await AuthService.IsLoggedIn();
-
         await FetchList();
     }
 

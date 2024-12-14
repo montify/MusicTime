@@ -12,7 +12,7 @@ namespace MusicTimeServa.Model.Mapping
             CreateMap<User, UserRegisterResponseDTO>();
             CreateMap<UserLoginRequestDTO, User>();
             CreateMap<User, UserLoginRequestDTO>();
-            CreateMap<User, UserLoginResponseDTO>();  
+            CreateMap<User, UserLoginResponseDTO>();
         }
     }
 }

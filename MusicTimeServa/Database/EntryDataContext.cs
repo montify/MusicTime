@@ -18,6 +18,6 @@ namespace MusicTimeServa.Database
             options.UseSqlite(Configuration.GetConnectionString("WebApiDatabase"));
         }
 
-        public DbSet<Entry> Entries { get; set; }      
+        public DbSet<Entry> Entries { get; set; }
     }
 }

@@ -44,7 +44,7 @@ namespace MusicTimeClient.Provider
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt")));
         }
 
-        public async Task LoggedIn()
+        public void LoggedIn()
         {
             var claims = new List<Claim>
             {

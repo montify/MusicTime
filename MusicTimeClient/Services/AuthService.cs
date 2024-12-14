@@ -5,7 +5,6 @@ using MusicTimeClient.Models.DTOs.Request;
 using MusicTimeClient.Models.DTOs.Response;
 using MusicTimeClient.Provider;
 using System.Net.Http.Json;
-using System.Text.Json.Serialization;
 
 namespace MusicTimeClient.Services
 {
@@ -22,33 +21,34 @@ namespace MusicTimeClient.Services
             m_AuthenticationStateProvider = authenticationStateProvider;
         }
 
-        public async Task<bool> IsLoggedIn()
-        {
-            var authState = await m_AuthenticationStateProvider.GetAuthenticationStateAsync();
-
-            return authState.User is not null;
-            //return m_localStorage.ContainsKey("jwtToken");
-        }
-
+   
         public async Task<User> Login(UserLoginRequestDTO userRequest)
         {
-            var response = await m_httpClient.PostAsJsonAsync<UserLoginRequestDTO>("Auth/Login", userRequest);
-            var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<UserLoginResponseDTO>>();
-
-            if (!apiResponse.IsSuccess)
-                return null;
-
-            var user = new User
+            try
             {
-                Email = apiResponse.Payload.Email,
-                Token = apiResponse.Payload.Token
-            };
+                var response = await m_httpClient.PostAsJsonAsync<UserLoginRequestDTO>("Auth/Login", userRequest);
+                var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<UserLoginResponseDTO>>();
 
-            //STORE JWT
-            await m_localStorage.AddItem("jwtToken", user.Token);
-            await ((ApiAuthenticationStateProvider)m_AuthenticationStateProvider).LoggedIn();
+                if (!apiResponse.IsSuccess)
+                    return null;
 
-            return user;
+                var user = new User
+                {
+                    Email = apiResponse.Payload.Email,
+                    Token = apiResponse.Payload.Token
+                };
+
+                //STORE JWT
+                await m_localStorage.AddItem("jwtToken", user.Token);
+                ((ApiAuthenticationStateProvider)m_AuthenticationStateProvider).LoggedIn();
+
+                return user;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Login failed: {ex.Message}");
+                return null;
+            }
         }
 
         public async Task Logout()

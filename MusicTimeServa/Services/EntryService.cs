@@ -47,7 +47,7 @@ namespace MusicTimeServa.Services
             catch (Exception)
             {
                 throw new Exception("Cant remove entry");
-            }           
+            }
         }
 
         public void UpdateEntry(Entry modifiedEntry)
