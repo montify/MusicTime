@@ -36,10 +36,8 @@ namespace MusicTimeClient.Provider
                 await m_localSotrage.RemoveItem("jwtToken");
                 return new AuthenticationState(nobody);
             }
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, "a")
-            };
+
+            var claims = tokenContent.Claims.ToList();
 
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt")));
         }
