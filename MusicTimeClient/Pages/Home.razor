@@ -1,22 +1,25 @@
 ﻿@page "/"
 @inject NavigationManager _navigationManager
 @using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.IdentityModel.JsonWebTokens
 @using MusicTimeClient.Contracts
 @using MusicTimeClient.Pages.Auth
 @using MusicTimeClient.Pages.Entries;
-
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthProvider;
 
 <div class="justify-content-center w-100">
 
-    <AuthorizeView>
+    <AuthorizeView>        
         <Authorized>
+
             <MudButton OnClick="OnLoggout">Logout</MudButton>
+            | Hello @User (ID: @UserId)
         </Authorized>
         <NotAuthorized>
             <MudButton OnClick="@ToggleOpen">Login</MudButton>
         </NotAuthorized>
     </AuthorizeView>
-
 
     <MudPopover Class="px-4 pt-4" Open="m_Open">
         <Login OnLogginSuccess="OnLogginSuccess" />
@@ -35,9 +38,27 @@
     [Inject]
     public IAuthService AuthService { get; set; }
 
+    public string User { get; set; } = "";
+    public string UserId { get; set; } = "";
+
     protected override async Task OnInitializedAsync()
     {
-        StateHasChanged();
+        var state = await AuthProvider.GetAuthenticationStateAsync();
+
+        if (state.User.Identity.IsAuthenticated)
+        {
+            var user = state.User;
+
+            // Safely check for claims
+            User = user.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Email)?.Value;
+            UserId = user.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti)?.Value;
+
+            // Check if the claims are present
+            if (User != null && UserId != null)
+            {
+                StateHasChanged();
+            } 
+        }       
     }
 
     public void OnLogginSuccess()

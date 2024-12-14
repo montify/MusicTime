@@ -42,12 +42,11 @@ namespace MusicTimeClient.Provider
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt")));
         }
 
-        public void LoggedIn()
+        public async void LoggedIn()
         {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, "TEESTName")
-            };
+            var token = await m_localSotrage.GetItem("jwtToken");
+            var tokenContent = jwtSecurityTokenHandler.ReadJwtToken(token);
+            var claims = tokenContent.Claims.ToList();
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt"));
             var authState = Task.FromResult(new AuthenticationState(user));
